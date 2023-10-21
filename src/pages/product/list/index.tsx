@@ -7,131 +7,149 @@ import { PaginateDataType, UrlType } from "../../../interface/common";
 import { listProducts } from "../../../services/products";
 import { getQueryFromUrl } from "../../../utils/common.utils";
 import ProductsTable from "./components/products.table";
-
+import ContactFilter from "./components/ContactFilter";
+import { useSearchParams } from "react-router-dom";
 
 const fixedListParams = {
-    paginate: true
-}
-
-
+  paginate: true,
+};
 
 const ProductList: FC = () => {
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoding] = useState<boolean>(false);
+  const [pagination, setPagination] = useState<PaginateDataType>({
+    next: null,
+    prev: null,
+    count: null,
+    resultsCount: 0,
+    offset: null,
+    hasOffset: true,
+    limit: PAGINATION_LIMIT,
+  });
 
-    const [products, setProducts] = useState<any[]>([]);
-    const [loading, setLoding] = useState<boolean>(false);
-    const [pagination, setPagination] = useState<PaginateDataType>({
-        next: null,
-        prev: null,
-        count: null,
-        resultsCount: 0,
-        offset: null,
-        hasOffset: true,
-        limit: PAGINATION_LIMIT
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    init();
+  }, []);
+
+  const init = async () => {
+    const params = Object.fromEntries(searchParams.entries());
+    if (Object.keys(params).length) {
+      await loadProducts(params);
+    } else {
+      await loadProducts();
+    }
+  };
+
+  const loadProducts = async (queryParams?: Record<string, any>) => {
+    let query = queryParams || {};
+    setLoding(true);
+    try {
+      const res = await listProducts({
+        query: { ...fixedListParams, ...query },
+      });
+
+      setProducts(res.data.results);
+      setPagination((prev) => {
+        return {
+          ...prev,
+          next: res.data.next,
+          prev: res.data.previous,
+          count: res.data.count,
+          resultsCount: res.data.results.length,
+          offset: query?.offset ? Number(query.offset) : null,
+        };
+      });
+    } catch (err) {
+      console.log(err);
+    }
+    setLoding(false);
+  };
+
+  const handleNext = (next: UrlType) => {
+    if (next === null) {
+      return;
+    }
+
+    let query = getQueryFromUrl(next);
+    const { contact, limit, offset, paginate } = query;
+
+    setSearchParams({
+      contact: contact ? contact : "",
+      limit: limit,
+      offset: offset,
+      paginate: paginate,
     });
+    loadProducts(query);
+  };
 
-    useEffect(() => {
-        init();
-    }, []);
-
-    const init = async () => {
-        loadProducts();
+  const handlePrev = (prev: UrlType) => {
+    if (prev === null) {
+      return;
     }
 
-    const loadProducts = async (queryParams?: Record<string, any>) => {
-        let query = queryParams || {};
-        setLoding(true);
-        try {
-            const res = await listProducts({
-                query: { ...fixedListParams, ...query }
-            });
+    let query = getQueryFromUrl(prev);
+    const { contact, limit, offset, paginate } = query;
 
-            setProducts(res.data.results);
-            setPagination(prev => {
-                return {
-                    ...prev,
-                    next: res.data.next,
-                    prev: res.data.previous,
-                    count: res.data.count,
-                    resultsCount: res.data.results.length,
-                    offset: query?.offset ? Number(query.offset) : null,
-                }
-            });
+    setSearchParams({
+      contact: contact ? contact : "",
+      limit: limit,
+      offset: offset,
+      paginate: paginate,
+    });
+    loadProducts(query);
+  };
 
-        } catch (err) {
-            console.log(err);
-        }
-        setLoding(false);
-    }
+  return (
+    <>
+      <div style={{ marginBottom: "1rem" }}>
+        <Heading titleLevel={2}>Products</Heading>
+      </div>
 
-    const handleNext = (next: UrlType) => {
-        if (next === null) {
-            return;
-        }
-        let query = getQueryFromUrl(next);
-        loadProducts(query);
-    }
-
-    const handlePrev = (prev: UrlType) => {
-        if (prev === null) {
-            return;
-        }
-        let query = getQueryFromUrl(prev);
-        loadProducts(query);
-    }
-    return (
-        <>
-            <div style={{ marginBottom: '1rem' }}>
-                <Heading
-                    titleLevel={2}
-                >
-                    Products
-                </Heading>
+      <div
+        style={{
+          backgroundColor: "white",
+          padding: "0.5rem",
+        }}
+      >
+        <div style={{ marginBottom: "1rem" }}>
+          <ContactFilter loadProducts={loadProducts} />
+        </div>
+        <div style={{ marginBottom: "1rem" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <div>
+              <ResultString
+                loading={loading}
+                pagination={pagination}
+                pageString={"product"}
+              />
             </div>
-            <div
-                style={{
-                    backgroundColor: 'white',
-                    padding: '0.5rem',
-                }}
-            >
-                <div style={{ marginBottom: '1rem' }}>
-                    <div
-                        style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <div>
-                            <ResultString
-                                loading={loading}
-                                pagination={pagination}
-                                pageString={'product'}
-                            />
-                        </div>
-                        <div>
-                            <Pagination
-                                next={pagination.next}
-                                prev={pagination.prev}
-                                onNextClick={handleNext}
-                                onPrevClick={handlePrev}
-                            />
-                        </div>
-                    </div>
-                </div>
-                <div style={{ marginBottom: '1rem' }}>
-                    <ProductsTable
-                        list={products}
-                        loading={loading}
-                    />
-                </div>
-                <div>
-                    <Pagination
-                        next={pagination.next}
-                        prev={pagination.prev}
-                    />
-                </div>
+            <div>
+              <Pagination
+                next={pagination.next}
+                prev={pagination.prev}
+                onNextClick={handleNext}
+                onPrevClick={handlePrev}
+              />
             </div>
-        </>)
-}
+          </div>
+        </div>
+        <div style={{ marginBottom: "1rem" }}>
+          <ProductsTable list={products} loading={loading} />
+        </div>
+        <div>
+          <Pagination next={pagination.next} prev={pagination.prev} />
+        </div>
+      </div>
+    </>
+  );
+};
 
 export default ProductList;
