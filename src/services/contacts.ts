@@ -1,24 +1,17 @@
 import axios from "axios";
 import config from "../config/config";
-import { PRODUCT } from "../constants/backend.constants";
 import { CONTACTS } from "../constants/contact.constants";
 
-type ListProductApi = {
+type ContactListApi = {
   query?: Record<string, any>;
 };
 
-
-const listProducts = (args?: ListProductApi) => {
-  let url = config.BACKEND_BASE + PRODUCT.LIST;
-
+const listContacts = (args?: ContactListApi) => {
+  let url = config.BACKEND_BASE + CONTACTS.LIST;
   let query = args?.query || {};
   return axios.get(url, {
     params: query,
   });
 };
 
-
-
-export { listProducts };
-
-
+export { listContacts };

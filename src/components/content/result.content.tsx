@@ -1,8 +1,13 @@
+//* Packages Imports */
 import { Typography } from 'antd';
 import { FC } from 'react';
+
+//* Services Imports */
 import { PAGINATION_LIMIT } from '../../constants/app.constants';
-import { PaginateDataType, ResultStringInterface } from '../../interface/common';
 import { pluralize } from '../../utils/common.utils';
+
+//* Types Imports */
+import { PaginateDataType, ResultStringInterface } from '../../interface/common';
 
 const defaultPagination: Partial<PaginateDataType> = {
     limit: PAGINATION_LIMIT,
