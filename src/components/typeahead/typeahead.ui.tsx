@@ -1,6 +1,7 @@
 import { Input, List, Spin } from "antd";
 import { ChangeEvent, FC } from "react";
 import "./typehead.style.css";
+import InfiniteScroll from "../infinitescroll/infinite.scroll";
 
 const { Search } = Input;
 type TypeaheadUI = {
@@ -11,8 +12,10 @@ type TypeaheadUI = {
   inputFocused: boolean;
   contactsList: any;
   contactsListPagination: any;
-  containerRef: any;
+  // containerRef: any;
   loading: boolean;
+  handleContactSelect:(e:MouseEvent)=>void
+  loadMore:()=>void
 };
 
 const TypeaheadUI: FC<TypeaheadUI> = ({
@@ -23,8 +26,9 @@ const TypeaheadUI: FC<TypeaheadUI> = ({
   inputFocused,
   contactsList,
   contactsListPagination,
-  containerRef,
   loading,
+  handleContactSelect,
+  loadMore
 }) => {
   return (
     <div
@@ -38,7 +42,7 @@ const TypeaheadUI: FC<TypeaheadUI> = ({
       <div
         style={{
           position: "relative",
-          flex:9/10
+          flex: 9 / 10,
         }}
       >
         <Search
@@ -49,53 +53,34 @@ const TypeaheadUI: FC<TypeaheadUI> = ({
           onBlur={() => handleFocus(false)}
         />
 
-        <div
-          id="contact-wrapper"
-          style={{
-            zIndex: 1000,
-            backgroundColor: "#fefefe",
-            boxShadow: "0 0 10px #e2e2e2",
-            margin: "5px 0",
-            borderRadius: "6px",
-            position: "absolute",
-            width: "100%",
-            maxHeight: "400px",
-            overflowY: "auto",
-            top: "105%",
-          }}
-        >
-          {inputFocused ? (
-          <List
-            dataSource={contactsList}
-            renderItem={(item: any) => {
-              if (item.company_name)
-                return (
-                  //show the item which have company name
-                  <List.Item
-                    key={item.id}
-                    data-contactid={item.id}
-                    data-value={item.company_name}
-                    // onMouseDown={(e) => handleContactSelect(e)}
-                  >
-                    {item.company_name}
-                  </List.Item>
-                );
-            }}
-            loading={loading}
-            locale={{ emptyText: "No Data" }}
-            id="contacts-list"
+        {inputFocused ? (
+          <InfiniteScroll
+            handleContactSelect={handleContactSelect}
+            hasMore={contactsListPagination.next}
+            loadMore={loadMore}
           >
-            {contactsListPagination.next ? (
-              <Spin>
-                <div
-                  ref={containerRef}
-                  style={{ height: "35px", overflow: "hidden" }}
-                />
-              </Spin>
-            ) : null}
-          </List>
-          ) : null}
-        </div>
+            <List
+              dataSource={contactsList}
+              renderItem={(item: any) => {
+                if (item.company_name)
+                  return (
+                    //show the item which have company name
+                    <List.Item
+                      key={item.id}
+                      data-contactid={item.id}
+                      data-value={item.company_name}
+                    >
+                      {item.company_name}
+                    </List.Item>
+                  );
+              }}
+              loading={loading}
+              locale={{ emptyText: "No Data" }}
+              id="contacts-list"
+            >
+            </List>
+          </InfiniteScroll>
+        ) : null}
       </div>
       <div
         style={{
@@ -107,8 +92,8 @@ const TypeaheadUI: FC<TypeaheadUI> = ({
           color: "#252525",
           cursor: "pointer",
           padding: "5px 15px",
-          flex:1/10,
-          textAlign:"center"
+          flex: 1 / 10,
+          textAlign: "center",
         }}
         onClick={handleReset}
       >

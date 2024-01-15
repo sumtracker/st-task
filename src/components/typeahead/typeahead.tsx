@@ -33,7 +33,6 @@ const Typehead: FC<Typehead> = ({
   const [query, setQuery] = useState<string | undefined>(""); // value of search box
   const [inputFocused, setInputFocused] = useState<boolean>(false);
   const cancelTokenSource = axios.CancelToken.source();
-  const containerRef = useRef(null);
   const [contactsList, setContactsList] = useState<any>([]);
   const [contactsListPagination, setContactsListPagination] = useState<any>({
     next: null,
@@ -57,8 +56,7 @@ const Typehead: FC<Typehead> = ({
     if (focus) handleFetchContacts(query ? { search: query } : null); // get all the contact when focused to input element
   };
 
-  const handlefetchMore = async () => {
-    console.log("object");
+  const handleFetchMore = async () => {
     try {
       const query = getQueryFromUrl(contactsListPagination.next);
       const res = await listContacts({
@@ -77,36 +75,6 @@ const Typehead: FC<Typehead> = ({
     }
   };
 
-  // Callback for the Intersection Observer
-  const handleIntersection = (entries: any) => {
-    const target = entries[0];
-    console.log(target.isIntersecting, contactsListPagination.next);
-
-    if (target.isIntersecting && contactsListPagination.next) {
-      // Load more data when the target becomes visible
-      handlefetchMore();
-    }
-  };
-
-  // Set up Intersection Observer when the component mounts
-  useEffect(() => {
-    const observer = new IntersectionObserver(handleIntersection, {
-      root: null,
-      rootMargin: "0px",
-      threshold: 0.1, // Trigger callback when 10% of the target is in view
-    });
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    // Cleanup function
-    return () => {
-      if (containerRef.current) {
-        observer.unobserve(containerRef.current);
-      }
-    };
-  }, [contactsListPagination]);
 
   useEffect(() => {
     // debounce the search API call for 600ms
@@ -146,17 +114,11 @@ const Typehead: FC<Typehead> = ({
 
   const handleReset = () => {
     navigate({ pathname: location.pathname });
+    setQuery("");
     loadProducts();
   };
 
-  useEffect(() => {
-    const contactWrapper = document.getElementById("contact-wrapper");
-    if (contactWrapper) {
-      contactWrapper.addEventListener("mousedown", handleContactSelect);
-    }
-    return () =>
-      contactWrapper?.removeEventListener("mousedown", handleContactSelect);
-  }, []);
+  
 
   return (
     <TypeaheadUI
@@ -167,8 +129,9 @@ const Typehead: FC<Typehead> = ({
       inputFocused={inputFocused}
       contactsList={contactsList}
       contactsListPagination={contactsListPagination}
-      containerRef={containerRef}
       loading={loading}
+      handleContactSelect={handleContactSelect}
+      loadMore={handleFetchMore}
     />
   );
 };
