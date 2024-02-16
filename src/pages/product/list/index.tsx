@@ -7,18 +7,15 @@ import { PaginateDataType, UrlType } from "../../../interface/common";
 import { listProducts } from "../../../services/products";
 import { getQueryFromUrl } from "../../../utils/common.utils";
 import ProductsTable from "./components/products.table";
-
+import ProductSearch from "../../../components/ProductSearch/ProductSearch";
 
 const fixedListParams = {
     paginate: true
 }
 
-
-
 const ProductList: FC = () => {
-
     const [products, setProducts] = useState<any[]>([]);
-    const [loading, setLoding] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const [pagination, setPagination] = useState<PaginateDataType>({
         next: null,
         prev: null,
@@ -30,37 +27,53 @@ const ProductList: FC = () => {
     });
 
     useEffect(() => {
-        init();
+        loadProducts();
     }, []);
 
-    const init = async () => {
-        loadProducts();
-    }
+    //code if api provided for getting search params from cotact id
+    // useEffect(() => {
+    //     //parse the URL query parameters
+    //     const searchParams = new URLSearchParams(location.search);
+    //     const contactId = searchParams.get('contact');
+    //     const paginate = searchParams.get('paginate') === 'True';
+    //     const limit = searchParams.get('limit');
+    //     const offset = searchParams.get('offset');
+
+    //     //if there is a contact in the URL, convert it to a search term
+    //     if (contactId) {
+    //         //there is no api provided to get the value of search value(searchTerm) from the contact id
+    //         //if it was given i could use it to showcase and save the value in searchTerm and call the onSelect to show the products 
+    //         setSearchTerm(contactId);//need searchTerm here
+    //     }
+
+    //     // Load contacts if needed
+    //     if (!searchTerm) {
+    //         loadContacts();
+    //     }
+    // }, [location.search]);
 
     const loadProducts = async (queryParams?: Record<string, any>) => {
         let query = queryParams || {};
-        setLoding(true);
+        setLoading(true);
         try {
             const res = await listProducts({
                 query: { ...fixedListParams, ...query }
             });
 
             setProducts(res.data.results);
-            setPagination(prev => {
-                return {
-                    ...prev,
-                    next: res.data.next,
-                    prev: res.data.previous,
-                    count: res.data.count,
-                    resultsCount: res.data.results.length,
-                    offset: query?.offset ? Number(query.offset) : null,
+            setPagination(prev => ({
+                ...prev,
+                next: res.data.next,
+                prev: res.data.previous,
+                count: res.data.count,
+                resultsCount: res.data.results.length,
+                offset: query?.offset ? Number(query.offset) : null,
                 }
-            });
-
+            ));            
         } catch (err) {
             console.log(err);
         }
-        setLoding(false);
+        setLoading(false);
     }
 
     const handleNext = (next: UrlType) => {
@@ -78,6 +91,7 @@ const ProductList: FC = () => {
         let query = getQueryFromUrl(prev);
         loadProducts(query);
     }
+
     return (
         <>
             <div style={{ marginBottom: '1rem' }}>
@@ -93,6 +107,7 @@ const ProductList: FC = () => {
                     padding: '0.5rem',
                 }}
             >
+                <ProductSearch loadProducts={loadProducts} setProducts={setProducts} setPagination={setPagination} pagination={pagination} />
                 <div style={{ marginBottom: '1rem' }}>
                     <div
                         style={{
