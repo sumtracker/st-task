@@ -17,10 +17,11 @@ interface ProductSearchprops {
   setProducts: (result: any[]) => void,
   setPagination: (result: any) => void,
   pagination: PaginateDataType,
+  contactId?: string | null
 }
 
 const ProductSearch = (props: ProductSearchprops) => {
-  const { loadProducts, setProducts, setPagination, pagination } = props
+  const { loadProducts, setProducts, setPagination, pagination, contactId } = props
   const [options, setOptions] = useState<Contact[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loadingMoreContacts, setLoadingMoreContacts] = useState<boolean>(false);
@@ -30,13 +31,15 @@ const ProductSearch = (props: ProductSearchprops) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-
-
-    if (searchTerm !== '') {
-      loadContacts();
+    if (!contactId) {
+      if (searchTerm !== '') {
+        loadContacts();
+      } else {
+        //to fetch all contacts if no search term
+        loadContacts();
+      }
     } else {
-      //to fetch all contacts if no search term
-      loadContacts();
+      onSelect(contactId)
     }
 
   }, [searchTerm]);
@@ -73,9 +76,14 @@ const ProductSearch = (props: ProductSearchprops) => {
   const onSelect = async (value: string) => {
     setLoading(true);
     try {
-      const contactId = idMapping[value];
+      let contactUniqueId;
       if (contactId) {
-        const encodedContactId = encodeURIComponent(contactId);
+        contactUniqueId = contactId;//exact page of the table is loaded when the user pastes the url of the app in the browser in a new tab
+      } else {
+        contactUniqueId = idMapping[value];
+      }
+      if (contactUniqueId) {
+        const encodedContactId = encodeURIComponent(contactUniqueId);
         const queryParams = { contact: encodedContactId, paginate: 'True' };
         const response = await listProducts({ query: queryParams });
         setProducts(response.data.results);

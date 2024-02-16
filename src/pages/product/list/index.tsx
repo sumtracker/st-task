@@ -8,6 +8,7 @@ import { listProducts } from "../../../services/products";
 import { getQueryFromUrl } from "../../../utils/common.utils";
 import ProductsTable from "./components/products.table";
 import ProductSearch from "../../../components/ProductSearch/ProductSearch";
+import { useLocation } from "react-router-dom";
 
 const fixedListParams = {
     paginate: true
@@ -25,9 +26,13 @@ const ProductList: FC = () => {
         hasOffset: true,
         limit: PAGINATION_LIMIT
     });
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const contactId = searchParams.get('contact');
 
     useEffect(() => {
-        loadProducts();
+        if (!contactId)
+            loadProducts();
     }, []);
 
     //code if api provided for getting search params from cotact id
@@ -107,7 +112,7 @@ const ProductList: FC = () => {
                     padding: '0.5rem',
                 }}
             >
-                <ProductSearch loadProducts={loadProducts} setProducts={setProducts} setPagination={setPagination} pagination={pagination} />
+                <ProductSearch loadProducts={loadProducts} setProducts={setProducts} setPagination={setPagination} pagination={pagination} contactId={contactId}/>
                 <div style={{ marginBottom: '1rem' }}>
                     <div
                         style={{
