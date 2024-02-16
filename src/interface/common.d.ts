@@ -13,6 +13,20 @@ interface ResultStringInterface {
   pageString?: string;
 }
 
+interface Contact {
+  value: string;
+  label: string;
+  id: number;
+}
+
+interface ProductSearchprops {
+  loadProducts: () => void,
+  setProducts: (result: any[]) => void,
+  setPagination: (result: any) => void,
+  pagination: PaginateDataType,
+  contactId?: string | null
+}
+
 type PaginateDataType = {
   next: UrlType;
   prev: UrlType;

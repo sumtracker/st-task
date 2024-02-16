@@ -4,21 +4,8 @@ import { listContacts } from '../../services/contact';
 import { listProducts } from '../../services/products';
 import { useNavigate } from 'react-router-dom';
 import { AutoComplete } from 'antd';
-import { PaginateDataType } from '../../interface/common';
+import { Contact, PaginateDataType, ProductSearchprops } from '../../interface/common';
 
-interface Contact {
-  value: string;
-  label: string;
-  id: number;
-}
-
-interface ProductSearchprops {
-  loadProducts: () => void,
-  setProducts: (result: any[]) => void,
-  setPagination: (result: any) => void,
-  pagination: PaginateDataType,
-  contactId?: string | null
-}
 
 const ProductSearch = (props: ProductSearchprops) => {
   const { loadProducts, setProducts, setPagination, pagination, contactId } = props
