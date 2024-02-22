@@ -1,6 +1,6 @@
 import axios from "axios";
 import config from "../config/config";
-import { PRODUCT } from "../constants/backend.constants";
+import { PRODUCT } from "../constants/api.constants";
 
 type ListProductApi = {
   query?: Record<string, any>;

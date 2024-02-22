@@ -23,3 +23,14 @@ type PaginateDataType = {
   hasOffset: boolean;
   offset: number | null;
 };
+
+type TypeheadContactType = {
+  id: number;
+  first_name: string;
+  last_name: string;
+};
+
+type ContactsPaginationType = {
+  next: UrlType;
+  prev: UrlType;
+};
