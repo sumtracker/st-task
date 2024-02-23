@@ -1,0 +1,23 @@
+.ant-input-search button{
+    border-left: none;
+}
+:where(.css-dev-only-do-not-override-16z6ojq).ant-input-search .ant-input-search-button{
+    height: 31.6px;
+}
+.ant-input-search .ant-input:hover,.ant-input-search .ant-input:focus{
+    box-shadow: none;
+    border-right: none;
+}
+.ant-input-search .ant-input:hover + span button,.ant-input-search .ant-input:focus + span button{
+    border-color: #a6a3c7;
+}
+:where(.css-dev-only-do-not-override-16z6ojq).ant-list .ant-list-item{
+    padding: 12px;
+    cursor: pointer;
+}
+:where(.css-dev-only-do-not-override-16z6ojq).ant-list .ant-list-item:hover{
+    background-color: #fafafa;
+}
+#contact-wrapper::-webkit-scrollbar{
+    display: none;
+}
