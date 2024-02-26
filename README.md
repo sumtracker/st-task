@@ -2,9 +2,30 @@
 
 Here are the steps to run and use this React app:
 
-- First clone the github repository using the following command .
-- Open a terminal inside the cloned folder and change directory to 'st-task' using the command 'cd st-task'
-- Do "yarn install" and then "yarn start"
+- First clone the github repository using the following command
+
+```zsh
+git clone git@github.com:prakharrichhariya/st-task.git
+```
+
+- Open a terminal inside the cloned folder and change directory to 'st-task' using the command
+
+```zsh
+cd st-task
+```
+
+- Checkout to my feature branch using the following command
+
+```zsh
+git checkout feature/contact-filter-input
+```
+
+- Run the following command
+
+```zsh
+yarn install; yarn start
+```
+
 - The project will start running at http://localhost:3000.
 - Open [http://localhost:3000](http://localhost:3000) to view the app in in your browser.
 - Once the app is open you can see that the Contact Filter Input along with a Reset button has been implemented.
@@ -37,6 +58,9 @@ Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
 The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+```
+
+```
