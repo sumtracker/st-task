@@ -8,7 +8,7 @@ Here are the steps to run and use this React app:
 git clone git@github.com:prakharrichhariya/st-task.git
 ```
 
-- Open a terminal inside the cloned folder and change directory to 'st-task' using the command
+- Open a terminal inside the cloned folder and change directory to 'st-task' using the following command
 
 ```zsh
 cd st-task
@@ -60,7 +60,3 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.\
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-```
-
-```
